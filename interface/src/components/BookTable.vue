@@ -1,44 +1,53 @@
-<script setup>
-defineProps({
-  msg: {
-    type: String,
-    required: true
-  }
-})
-</script>
-
+<!-- BookTable.vue -->
 <template>
-  <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You’ve successfully created a project with
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Book ID</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Genre</th>
+          <th>Price</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <BookItem
+          v-for="book in paginatedFilteredBooks"
+          :key="book.id"
+          :book="book"
+        />
+      </tbody>
+    </table>
+    <Pagination
+      :currentPage="currentPage"
+      :totalPages="totalFilteredPages"
+      @change="changePage"
+    />
   </div>
 </template>
 
-<style scoped>
-h1 {
-  font-weight: 500;
-  font-size: 2.6rem;
-  position: relative;
-  top: -10px;
-}
+<script>
+import { mapState, mapGetters } from 'vuex';
+import BookItem from './BookItem.vue';
+import BookSearch from './BookSearch.vue';
+import Pagination from './Pagination.vue';
 
-h3 {
-  font-size: 1.2rem;
-}
-
-.greetings h1,
-.greetings h3 {
-  text-align: center;
-}
-
-@media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
-    text-align: left;
-  }
-}
-</style>
+export default {
+  components: {
+    BookItem,
+    BookSearch,
+    Pagination,
+  },
+  computed: {
+    ...mapState(['currentPage']),
+    ...mapGetters(['paginatedFilteredBooks', 'totalFilteredPages']),
+  },
+  methods: {
+    changePage(page) {
+      this.$store.dispatch('changePage', page);
+    },
+  },
+};
+</script>
